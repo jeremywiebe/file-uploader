@@ -263,7 +263,7 @@ qq.FileUploaderBasic = function(o){
         minSizeLimit: 0,                             
         // events
         // return false to cancel submit
-        onSubmit: function(id, fileName){},
+        onSubmit: function(id, fileName, size){},
         onProgress: function(id, fileName, loaded, total){},
         onComplete: function(id, fileName, responseJSON){},
         onCancel: function(id, fileName){},
@@ -353,7 +353,7 @@ qq.FileUploaderBasic.prototype = {
             return self._options.messages.onLeave;             
         });        
     },    
-    _onSubmit: function(id, fileName){
+    _onSubmit: function(id, fileName, size){
         this._filesInProgress++;  
     },
     _onProgress: function(id, fileName, loaded, total){        
@@ -391,9 +391,10 @@ qq.FileUploaderBasic.prototype = {
     _uploadFile: function(fileContainer){      
         var id = this._handler.add(fileContainer);
         var fileName = this._handler.getName(id);
+		var size = this._handler.getSize(id);
         
-        if (this._options.onSubmit(id, fileName) !== false){
-            this._onSubmit(id, fileName);
+        if (this._options.onSubmit(id, fileName, size) !== false){
+            this._onSubmit(id, fileName, size);
             this._handler.upload(id, this._options.params);
         }
     },      
@@ -587,7 +588,7 @@ qq.extend(qq.FileUploader.prototype, {
             }
         });                
     },
-    _onSubmit: function(id, fileName){
+    _onSubmit: function(id, fileName, size){
         qq.FileUploaderBasic.prototype._onSubmit.apply(this, arguments);
         this._addToList(id, fileName);  
     },
